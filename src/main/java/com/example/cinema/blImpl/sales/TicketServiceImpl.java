@@ -124,20 +124,18 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public ResponseVO getTicketByUser(int userId) {
-        try{
-            List<Ticket> tickets=ticketMapper.selectTicketByUser(userId);
-            if(tickets!=null){
-                for(int i=0;i<tickets.size();i++){
-                    ticket=tickets.get(i);
-
-                }return ResponseVO.buildSuccess(new TicketVO());
-
+        List<Ticket> tickets=ticketMapper.selectTicketByUser(userId);
+        List<TicketVO> response=new ArrayList<>();
+        if(tickets!=null){
+            for(int i=0;i<tickets.size();i++){
+                 Ticket ticket=tickets.get(i);
+                 TicketVO ticketVO=ticket.getVO();
+                 response.add(ticketVO);
             }
-            else{
-                return ResponseVO.buildSuccess(null);
-            }
-
-        }catch(Exception e){
+            return ResponseVO.buildSuccess(response);
+        }
+        return ResponseVO.buildSuccess();
+        } catch(Exception e) {
             e.printStackTrace();
             return ResponseVO.buildFailure("失败");
         }
