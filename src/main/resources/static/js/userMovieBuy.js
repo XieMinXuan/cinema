@@ -104,7 +104,7 @@ function orderConfirmClick() {
 
     // TODO:这里是假数据，需要连接后端获取真数据，数据格式可以自行修改，但如果改了格式，别忘了修改renderOrder方法
     var orderInfo = {
-        "ticketVOList": [{
+        /*"ticketVOList": [{
             "id": 63,
             "userId": 15,
             "scheduleId": 67,
@@ -162,8 +162,55 @@ function orderConfirmClick() {
                 "startTime": "2019-04-21T00:00:00.000+0800",
                 "endTime": "2019-04-27T00:00:00.000+0800"
             }
-        }]
+        }]*/
     };
+    var seatList=[];
+    for(var i=0;i<selectedSeats.length;i++){
+        var seat={
+            columnIndex:selectedSeats[i][1],
+            rowIndex:selectedSeats[i][0]
+        };
+        seatList.push(seat);
+    }
+    var ticketform={
+        userId:parseInt(sessionStorage.getItem('id')),
+        scheduleId:scheduleId,
+        seats:seatList
+    }
+    postRequest('/ticket/lockSeat',ticketform,function(res){
+        if(res.success){
+            //alert(",,,");
+            orderInfo.ticketVOList=res.content;
+        }
+        else{
+            alert("失败");
+        }},
+        function(error){
+        alert(error);
+        }
+    );
+    getRequest('/coupon/'+sessionStorage.getItem('id')+'/get',
+        function (res) {
+            //alert(";;;")
+            orderInfo.coupons=res.content;},
+        function(error){
+        alert(error);
+        }
+        );
+    getRequest('/activity/get',function(res){
+        orderInfo.activities=res.content;},
+        function(error){
+        alert(error);
+        }
+    );
+    getRequest('/schedule/'+scheduleId,function(res){
+        //alert("...")
+        orderInfo.total=res.content.fare*selectedSeats.length;},
+        function(error){
+        alert(error);
+        }
+        );
+    
     renderOrder(orderInfo);
 
     getRequest(
@@ -254,10 +301,34 @@ function payConfirmClick() {
 }
 
 // TODO:填空
-function postPayRequest() {
-    $('#order-state').css("display", "none");
-    $('#success-state').css("display", "");
-    $('#buyModal').modal('hide')
+function postPayRequest(isVip) {
+    var url="/ticket/";
+    if(isVip) {
+        url+="vip/buy";
+    }
+    else {
+        url+="buy";
+    }
+    url+= ("?ticketId="+order.ticketId+"&couponId="+order.couponId);
+    postRequest(url,{},function(res){
+        $('#order-state').css("display", "none");
+        $('#success-state').css("display", "");
+        $('#buyModal').modal('hide');
+    },function(error){
+        alert(error);
+    })
+}
+
+function payCancelClick(){
+    postRequest("/ticket/cancel?ticketId="+order.ticketId,{},function(res){
+        if(res.success) {
+            $('#order-state').css('display', 'none');
+            $('#seat-state').css('display', "");
+            order.ticketId=[];
+        }
+    },function(error){
+        alert(error);
+    })
 }
 
 function validateForm() {
