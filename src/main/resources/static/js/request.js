@@ -9,7 +9,30 @@ function getRequest(url, onSuccess, onError) {
     });
 }
 
+function getRequest1(url, onSuccess, onError) {
+    $.ajax({
+        type: 'GET',
+        url: url,
+        async: false,
+        success: onSuccess,
+        error: onError
+    });
+}
+
 function postRequest(url, data, onSuccess, onError) {
+    $.ajax({
+        type: 'POST',
+        url: url,
+        async: false,
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        processData: false,
+        success: onSuccess,
+        error: onError
+    });
+}
+
+function postRequest1(url, data, onSuccess, onError) {
     $.ajax({
         type: 'POST',
         url: url,
