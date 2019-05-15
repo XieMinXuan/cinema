@@ -177,7 +177,7 @@ function orderConfirmClick() {
         scheduleId:scheduleId,
         seats:seatList
     }
-    postRequest('/ticket/lockSeat',ticketform,function(res){
+    postRequest1('/ticket/lockSeat',ticketform,function(res){
         if(res.success){
             //alert(",,,");
             orderInfo.ticketVOList=res.content;
@@ -189,7 +189,7 @@ function orderConfirmClick() {
         alert(error);
         }
     );
-    getRequest('/coupon/'+sessionStorage.getItem('id')+'/get',
+    getRequest1('/coupon/'+sessionStorage.getItem('id')+'/get',
         function (res) {
             //alert(";;;")
             orderInfo.coupons=res.content;},
@@ -197,13 +197,13 @@ function orderConfirmClick() {
         alert(error);
         }
         );
-    getRequest('/activity/get',function(res){
+    getRequest1('/activity/get',function(res){
         orderInfo.activities=res.content;},
         function(error){
         alert(error);
         }
     );
-    getRequest('/schedule/'+scheduleId,function(res){
+    getRequest1('/schedule/'+scheduleId,function(res){
         //alert("...")
         orderInfo.total=res.content.fare*selectedSeats.length;},
         function(error){
