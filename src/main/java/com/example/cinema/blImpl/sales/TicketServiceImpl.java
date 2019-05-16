@@ -145,7 +145,7 @@ public class TicketServiceImpl implements TicketService {
     @Transactional
     public ResponseVO completeByVIPCard(List<Integer> id, int couponId) {
         try{
-            ticket=ticketMapper.selectTicketById(id.get(0));
+             ticket=ticketMapper.selectTicketById(id.get(0));
             int userId=ticket.getUserId();
             audiencePrice.setUserId(userId);
             int scheduleId=ticket.getScheduleId();
@@ -165,9 +165,8 @@ public class TicketServiceImpl implements TicketService {
                 }
             }
 
-            total=balance-total;
             audiencePrice.setTotalPrice(total);
-            vipCard.setBalance(total);
+            vipCard.setBalance(balance-total);
             for(int ticketId:id){
                 ticketMapper.updateTicketState(ticketId,1);
             }
@@ -183,6 +182,7 @@ public class TicketServiceImpl implements TicketService {
                 coupon=activity.getCoupon();
                 couponMapper.insertCoupon(coupon);
             }
+            
 
             return ResponseVO.buildSuccess();
         }catch(Exception e){
